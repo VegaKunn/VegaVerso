@@ -1,0 +1,10 @@
+.botoesMenuEsquerdo {
+  width: 90%;
+  aspect-ratio: 1/1;
+  border: 2px solid;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px 0;
+}

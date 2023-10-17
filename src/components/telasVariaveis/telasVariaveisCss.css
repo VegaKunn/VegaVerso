@@ -1,0 +1,69 @@
+.blocos1 {
+  width: 150px;
+  aspect-ratio: 1/0.8;
+  border: solid 1px;
+  border-radius: 10%;
+}
+
+.blocos1 .blocoTitulo {
+  height: 80%;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+}
+.blocos1 .blocoConfig {
+  display: flex;
+  height: 20%;
+  border-top: 2px solid;
+  justify-content: space-around;
+}
+
+.blocos1 .blocoConfig div {
+  width: 50%;
+}
+
+.allAtalhos {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+}
+
+.registro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.divPaiBotoesRegistro {
+  width: 80%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.divPaiBotoesRegistro div {
+  width: 220px;
+  aspect-ratio: 1/0.3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid 2px;
+  border-radius: 10px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  box-shadow: 5px 5px rgb(179, 179, 179);
+  cursor: pointer;
+}
+.divPaiBotoesRegistro div:hover {
+  color: rgb(24, 128, 255);
+}
+
+.registrarBtn {
+  border: 2px solid;
+  font-size: 1.3rem;
+  margin-top: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
