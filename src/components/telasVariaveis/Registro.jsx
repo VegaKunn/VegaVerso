@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import global from "../../global.mjs";
 import "./telasVariaveisCss.css";
-
+const { ipcRenderer } = window.require("electron");
+let global;
 export default function Registro() {
+  // const [global, setGlobal] = useState([]);
+
+  const [ultimaRender, setUltimaRender] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [registroSelecionado, setRegistroSelecionado] = useState("Atalhos");
   const [tipoDeGegistro, setTipoDeRegistro] = useState("");
   const [nome, setNome] = useState("");
@@ -10,7 +14,25 @@ export default function Registro() {
   const [pastaSelecionada, setPastaSelecionada] = useState("Atalhos");
   const [pastasExistentes, setPastasExistentes] = useState([]);
 
+  function buscarAtualizacao() {
+    ipcRenderer.send("atualizar global", "pegar");
+    ipcRenderer.on("global atualizado", (event, data) => {
+      global = data;
+      setIsLoading(false);
+      setUltimaRender(true);
+      // Atualize o estado quando a resposta chegar.
+    });
+  }
+
+  function atualizarGlobal(dados) {
+    ipcRenderer.send("atualizar global", {
+      global: dados,
+      atualizar: "atualizar",
+    });
+  }
+
   useEffect(() => {
+    buscarAtualizacao();
     let ar = [];
     function teste(f, pai) {
       for (let item in f) {
@@ -29,8 +51,14 @@ export default function Registro() {
       }
     }
     setPastasExistentes(ar);
-    teste(global.atalhos, "");
-  }, []);
+    global && console.log(global?.atalhos);
+    console.log(global);
+    teste(global?.atalhos, " ");
+    return () => {
+      // Remova o ouvinte quando o componente for desmontado para evitar vazamentos de memória.
+      ipcRenderer.removeAllListeners("global atualizado");
+    };
+  }, [ultimaRender, setUltimaRender]); // aqui
 
   function registrar(g, local, novo) {
     function mapRecursivo(a, b, c) {
@@ -45,28 +73,34 @@ export default function Registro() {
     }
     mapRecursivo(g, local, novo);
   }
-  // registrar(global.atalhos, "css", { nome: "batata" });
+  // registrar(global?.atalhos, "css", { nome: "batata" });
 
   return (
     <div className="telasVariaveis">
       <div className="registro">
-        <h1>Registros</h1>
-        <div className="divPaiBotoesRegistro">
-          <div
-            onClick={() => {
-              setRegistroSelecionado("Atalhos");
-            }}
-          >
-            Atalhos
-          </div>
-          <div
-            onClick={() => {
-              setRegistroSelecionado("Comandos");
-            }}
-          >
-            Comandos
-          </div>
-        </div>
+        {isLoading ? (
+          <p>Carregando dados globais...</p>
+        ) : (
+          <>
+            <h1>Registros</h1>
+            <div className="divPaiBotoesRegistro">
+              <div
+                onClick={() => {
+                  setRegistroSelecionado("Atalhos");
+                }}
+              >
+                Atalhos
+              </div>
+              <div
+                onClick={() => {
+                  setRegistroSelecionado("Comandos");
+                }}
+              >
+                Comandos
+              </div>
+            </div>
+          </>
+        )}
         {registroSelecionado === "Atalhos" ? (
           <>
             <h2>Adicionar</h2>
@@ -81,6 +115,7 @@ export default function Registro() {
               <div
                 onClick={() => {
                   setTipoDeRegistro("Link");
+                  setPastaSelecionada(pastasExistentes[0]);
                 }}
               >
                 Link
@@ -88,7 +123,7 @@ export default function Registro() {
             </div>
           </>
         ) : null}
-        {tipoDeGegistro === "Pasta" ? (
+        {tipoDeGegistro === "Pasta" && registroSelecionado === "Atalhos" ? (
           <>
             <label htmlFor="nome">Nome Da Pasta:</label>
             <input
@@ -117,19 +152,21 @@ export default function Registro() {
               className="registrarBtn"
               onClick={() => {
                 if (pastaSelecionada === "Atalhos") {
-                  global.atalhos.push({
+                  global?.atalhos.push({
                     nome: nome,
                     tipo: "pasta",
                     filhos: [],
                   });
                 }
-                registrar(global.atalhos, pastaSelecionada, {
+                registrar(global?.atalhos, pastaSelecionada, {
                   nome: nome,
                   tipo: "pasta",
                   filhos: [],
                 });
 
                 setNome("");
+
+                atualizarGlobal(global);
               }}
             >
               Registrar Atalho
@@ -172,13 +209,16 @@ export default function Registro() {
             <div
               className="registrarBtn"
               onClick={() => {
-                registrar(global.atalhos, pastaSelecionada, {
+                registrar(global?.atalhos, pastaSelecionada, {
                   nome: nome,
                   tipo: "link",
                   link: link,
                 });
+
                 setNome("");
                 setLink("");
+                console.log("estou no link");
+                atualizarGlobal(global);
               }}
             >
               Registrar Atalho

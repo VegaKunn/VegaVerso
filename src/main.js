@@ -1,8 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
-
+const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
+const settings = require("electron-settings");
 const a = require("./executarComandos");
 
-//a.lol();
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
@@ -17,21 +16,40 @@ const createWindow = () => {
 
   ipcMain.on("navegar", (event, data) => {
     createNewWindow(data);
-
-    // Faça o que você desejar com os parâmetros aqui, por exemplo, executar alguma lógica no backend do Electron.
+  });
+  ipcMain.on("atualizar global", (event, data) => {
+    if (data === "pegar") {
+      let globalAtualizado = settings.getSync("global");
+      event.sender.send("global atualizado", globalAtualizado);
+    }
+    if (data.atualizar === "atualizar") {
+      settings.setSync("global", data.global);
+    }
   });
 
   ipcMain.on("solicitar-informacao", (event, arg) => {
     createNewWindow("http://www.google.com");
     createNewWindow("http://www.youtube.com");
 
-    // Aqui você pode processar a solicitação e enviar uma resposta de volta para o processo renderizador.
+    // Aqui você pode processar  solicitação e enviar uma resposta de volta para o processo renderizador.
     event.reply("informacao-resposta", "Os dados que você solicitou.");
   });
 };
 
+function teclasDeAtalho() {
+  globalShortcut.register("Ctrl+Num1", () => {
+    a.lol();
+    console.log("a");
+  });
+  globalShortcut.register("Ctrl+Num0", () => {
+    a.lol();
+    console.log("a");
+  });
+}
+
 app.whenReady().then(() => {
   createWindow();
+  teclasDeAtalho();
 });
 
 // Crie uma nova janela quando um evento for acionado (por exemplo, clicando em um botão)
