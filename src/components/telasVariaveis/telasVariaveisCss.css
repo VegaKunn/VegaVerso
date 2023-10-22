@@ -35,12 +35,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-size: 1.25rem;
 }
 
 .divPaiBotoesRegistro {
   width: 80%;
   display: flex;
   justify-content: space-around;
+  margin: 10px 0;
 }
 
 .divPaiBotoesRegistro div {

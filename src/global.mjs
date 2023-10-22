@@ -1,4 +1,5 @@
 const global = {
+  validado: true,
   ferramentas: [],
   atalhos: [
     {

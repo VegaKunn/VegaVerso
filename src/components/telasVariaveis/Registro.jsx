@@ -13,7 +13,9 @@ export default function Registro() {
   const [link, setLink] = useState("");
   const [pastaSelecionada, setPastaSelecionada] = useState("Atalhos");
   const [pastasExistentes, setPastasExistentes] = useState([]);
-
+  const [atalhoA, setAtalhoA] = useState("");
+  const [atalhoB, setAtalhoB] = useState("");
+  const [caminhoAtalho, setCaminhoAtalho] = useState("");
   function buscarAtualizacao() {
     ipcRenderer.send("atualizar global", "pegar");
     ipcRenderer.on("global atualizado", (event, data) => {
@@ -77,7 +79,7 @@ export default function Registro() {
 
   return (
     <div className="telasVariaveis">
-      <div className="registro">
+      <div className="registro ">
         {isLoading ? (
           <p>Carregando dados globais...</p>
         ) : (
@@ -122,13 +124,123 @@ export default function Registro() {
               </div>
             </div>
           </>
-        ) : null}
+        ) : (
+          <>
+            <h2>Adicionar</h2>
+            <label htmlFor="">Escolha um comando:</label> <br />
+            <select
+              value={atalhoA}
+              onChange={(e) => {
+                setAtalhoA(e.target.value);
+              }}
+            >
+              <option value=""></option>
+              {/*<option value="Super">Windows</option>*/}
+              <option value="Ctrl">Ctrl</option>
+              <option value="Alt">Alt</option>
+              <option value="CmdOrCtrl">Ctrl+ALT</option>
+            </select>
+            <label htmlFor="">Escolha um comando:</label> <br />
+            <select
+              name="atalhoB"
+              value={atalhoB}
+              onChange={(e) => {
+                setAtalhoB(e.target.value);
+              }}
+            >
+              <option value=""></option>
+              <option value="a">a</option>
+              <option value="b">b</option>
+              <option value="c">c</option>
+              <option value="d">d</option>
+              <option value="e">e</option>
+              <option value="f">f</option>
+              <option value="g">g</option>
+              <option value="h">g</option>
+              <option value="i">i</option>
+              <option value="j">j</option>
+              <option value="k">k</option>
+              <option value="l">l</option>
+              <option value="m">m</option>
+              <option value="n">n</option>
+              <option value="o">o</option>
+              <option value="p">p</option>
+              <option value="q">q</option>
+              <option value="r">r</option>
+              <option value="s">s</option>
+              <option value="t">t</option>
+              <option value="u">u</option>
+              <option value="v">v</option>
+              <option value="w">w</option>
+              <option value="x">x</option>
+              <option value="y">y</option>
+              <option value="z">z</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="Num0">numerico 0</option>
+              <option value="Num1">numerico 1</option>
+              <option value="Num2">numerico 2</option>
+              <option value="Num3">numerico 3</option>
+              <option value="Num4">numerico 4</option>
+              <option value="Num5">numerico 5</option>
+              <option value="Num6">numerico 6</option>
+              <option value="Num7">numerico 7</option>
+              <option value="Num8">numerico 8</option>
+              <option value="Num9">numerico 9</option>
+              <option value="Up">Cima</option>
+              <option value="Down">Direita</option>
+              <option value="Left">Baixo</option>
+              <option value="Right">Esquerda</option>
+            </select>
+            <label htmlFor="">
+              Cole o caminho exato do arquivo ou pasta que deseja acessar
+            </label>
+            <input
+              type="text"
+              value={caminhoAtalho}
+              onChange={(e) => {
+                setCaminhoAtalho(e.target.value);
+              }}
+            />
+            <div
+              className="registrarBtn"
+              onClick={() => {
+                let comando = atalhoA + "+" + atalhoB;
+
+                const novoAtalho = {
+                  comando,
+                  caminho: caminhoAtalho,
+                };
+                if (novoAtalho.comando !== "" && novoAtalho.caminho !== "") {
+                  global.comandos.push(novoAtalho);
+                }
+
+                console.log(global);
+                // atualizarGlobal(global);
+                setAtalhoA("");
+                setAtalhoB("");
+                setCaminhoAtalho("");
+              }}
+            >
+              Registrar Atalho
+            </div>
+          </>
+        )}
         {tipoDeGegistro === "Pasta" && registroSelecionado === "Atalhos" ? (
           <>
             <label htmlFor="nome">Nome Da Pasta:</label>
             <input
               name="nome"
               type="text"
+              className=" shadow-xl m-2 border-1 ring-black ring-1"
               value={nome}
               onChange={(e) => {
                 setNome(e.target.value);
@@ -173,7 +285,7 @@ export default function Registro() {
             </div>
           </>
         ) : null}
-        {tipoDeGegistro === "Link" ? (
+        {tipoDeGegistro === "Link" && registroSelecionado === "Atalhos" ? (
           <>
             <label htmlFor="nome">Digite o nome do link:</label>
             <input

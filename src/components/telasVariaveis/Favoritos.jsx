@@ -2,14 +2,32 @@ import { useState, useEffect } from "react";
 import "./telasVariaveisCss.css";
 const { ipcRenderer } = window.require("electron");
 
+let global;
+
 export default function Favoritos() {
   const [arrPaieFilho, setArrPaieFilho] = useState(null);
   function buscarAtualizacao() {
     ipcRenderer.send("atualizar global", "pegar");
     ipcRenderer.on("global atualizado", (event, data) => {
-      setArrPaieFilho(data); // Atualize o estado quando a resposta chegar.
+      global = data;
+      console.log(global);
+      setArrPaieFilho(data.favoritos); // Atualize o estado quando a resposta chegar.
     });
   }
+
+  function atualizarGlobal(dados) {
+    global.favoritos = dados;
+
+    ipcRenderer.send("atualizar global", {
+      global,
+      atualizar: "atualizar",
+    });
+    ipcRenderer.on("global atualizado", (event, data) => {
+      console.log("data");
+      setArrPaieFilho(data.atalhos); // Atualize o estado quando a resposta chegar.
+    });
+  }
+
   useEffect(() => {
     buscarAtualizacao(); // Chame a função de busca quando o componente for montado.
 
@@ -37,6 +55,7 @@ export default function Favoritos() {
     if (arrPaieFilho) {
       const novoArrPaieFilho = [...arrPaieFilho];
       excluirObjetoPorNome(novoArrPaieFilho, item.nome);
+      atualizarGlobal(novoArrPaieFilho);
       setArrPaieFilho(novoArrPaieFilho);
     }
   }
@@ -44,11 +63,15 @@ export default function Favoritos() {
   function renderizarAbas(renderizarPasta) {
     // Verifique se renderizarPasta é um array antes de mapeá-lo
 
-    if (Array.isArray(renderizarPasta.Favoritos)) {
-      return renderizarPasta.Favoritos.map((item, index) => (
-        <div className="blocos1" key={index}>
+    if (Array.isArray(renderizarPasta)) {
+      console.log(renderizarPasta);
+      return renderizarPasta.map((item, index) => (
+        <div
+          className="flex flex-col rounded-3xl  ring-2 ring-gray-50 p-0 aspect-square cursor-pointer hover:bg-cyan-400 hover:shadow-cyan-400  w-40 h-40 text-lg text-slate-100 text-opacity-90 font-bold justify-center bg-cyan-500 shadow-xl shadow-cyan-500/80 "
+          key={index}
+        >
           <div
-            className="blocoTitulo"
+            className="h-32  w-full flex justify-center items-center"
             onClick={() => {
               if (item.tipo === "pasta") {
                 setArrPaieFilho(item.filhos);
@@ -61,7 +84,12 @@ export default function Favoritos() {
             <p>{item.nome}</p>
           </div>
           <div className="blocoConfig">
-            <div onClick={() => handleExcluirItem(item)}>X</div>
+            <div
+              className="w-full hover:text-red-500"
+              onClick={() => handleExcluirItem(item)}
+            >
+              X
+            </div>
           </div>
         </div>
       ));
@@ -72,7 +100,7 @@ export default function Favoritos() {
   }
 
   return (
-    <div className="telasVariaveis">
+    <div className="h-full flex flex-col bg-zinc-100 ">
       <div>
         <h2>Retornar</h2>
       </div>

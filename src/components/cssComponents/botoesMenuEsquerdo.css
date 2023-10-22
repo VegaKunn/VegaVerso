@@ -1,10 +1,19 @@
 .botoesMenuEsquerdo {
-  width: 90%;
+  min-width: 90%;
   aspect-ratio: 1/1;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+  box-shadow: 5px 5px 5px rgb(0, 0, 0);
   border: 2px solid;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 5px 0;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+:hover.botoesMenuEsquerdo {
+  background-color: rgb(34, 211, 238);
 }

@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const settings = require("electron-settings");
+
 const a = require("./executarComandos");
 
 const createWindow = () => {
@@ -36,20 +37,19 @@ const createWindow = () => {
   });
 };
 
-function teclasDeAtalho() {
-  globalShortcut.register("Ctrl+Num1", () => {
-    a.lol();
-    console.log("a");
-  });
-  globalShortcut.register("Ctrl+Num0", () => {
-    a.lol();
-    console.log("a");
+async function teclasDeAtalho(arrayDeComandos) {
+  let { comandos } = settings.getSync("global");
+  comandos.map((item) => {
+    globalShortcut.register(item.comando, () => {
+      a.lol(item.caminho);
+      console.log(item.comando);
+    });
   });
 }
 
 app.whenReady().then(() => {
   createWindow();
-  teclasDeAtalho();
+  teclasDeAtalho([1]);
 });
 
 // Crie uma nova janela quando um evento for acionado (por exemplo, clicando em um botão)

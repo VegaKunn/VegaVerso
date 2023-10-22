@@ -1,12 +1,13 @@
 .menuLateralEsquerdo {
-  max-width: 100px;
-  min-width: 75px;
+  max-width: 160px;
+  min-width: 130px;
   width: 10%;
+  height: 100%;
+  min-height: 100vh;
+  padding-right: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-
+  box-shadow: inset -2px -2px 5px black;
   align-items: center;
-  border-right: solid 4px;
-  min-height: 100vh;
 }
